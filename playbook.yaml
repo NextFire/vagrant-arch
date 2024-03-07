@@ -85,8 +85,8 @@
 
     - name: Set keyboard layout (KDE)
       ansible.builtin.copy:
-        content: "{{ kxkbrc }}"
-        dest: ~/kxkbrc
+        content: "{{ kde_kxkbrc }}"
+        dest: ~/.config/kxkbrc
         mode: "0600"
 
     - name: Reboot
