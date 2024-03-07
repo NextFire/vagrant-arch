@@ -1,0 +1,8 @@
+---
+shell: /usr/bin/fish
+x11_keymap: fr macintosh
+kde_kxkbrc: |
+  [Layout]
+  Use=true
+  LayoutList=fr
+  VariantList=mac

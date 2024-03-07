@@ -1,0 +1,94 @@
+---
+- name: Setup Arch Linux
+  hosts: all
+  vars_files:
+    - variables.yaml
+  tasks:
+    - name: Edit pacman.conf
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/pacman.conf
+        regexp: "^#Color"
+        line: "Color"
+
+    - name: Upgrade system
+      become: true
+      community.general.pacman:
+        update_cache: true
+        upgrade: true
+
+    - name: Install yay dependencies
+      become: true
+      community.general.pacman:
+        name:
+          - base-devel
+          - git
+
+    - name: Clone yay-bin
+      ansible.builtin.git:
+        repo: https://aur.archlinux.org/yay-bin.git
+        dest: /var/tmp/yay-bin
+        version: master
+
+    - name: Install yay
+      ansible.builtin.command:
+        cmd: makepkg --noconfirm -si
+        chdir: /var/tmp/yay-bin
+        creates: /usr/bin/yay
+
+    - name: Install packages
+      community.general.pacman:
+        executable: yay
+        name:
+          - firefox
+          - fish
+          - gtkmm3
+          - htop
+          - konsole
+          - mesa
+          - noto-fonts
+          - noto-fonts-cjk
+          - noto-fonts-emoji
+          - open-vm-tools
+          - plasma-desktop
+          - ranger
+          - reflector
+          - sddm
+          - vim
+          - wget
+          - xf86-input-vmmouse
+          - xf86-video-vmware
+          - xorg-server
+
+    - name: Enable services
+      become: true
+      ansible.builtin.service:
+        name: "{{ item }}"
+        enabled: true
+      with_items:
+        - reflector
+        - sddm
+        - vmtoolsd
+        - vmware-vmblock-fuse
+
+    - name: Set default shell
+      become: true
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        shell: "{{ shell }}"
+
+    - name: Set keyboard layout (X11)
+      become: true
+      ansible.builtin.command:
+        cmd: localectl set-x11-keymap {{ x11_keymap }}
+      changed_when: true
+
+    - name: Set keyboard layout (KDE)
+      ansible.builtin.copy:
+        content: "{{ kxkbrc }}"
+        dest: ~/kxkbrc
+        mode: "0600"
+
+    - name: Reboot
+      become: true
+      ansible.builtin.reboot:
