@@ -1,1 +1,14 @@
-/.vagrant/
+*
+!.gitignore
+!README.md
+!LICENSE
+
+!Vagrantfile
+
+!ansible.cfg
+!playbook.yaml
+!variables.yaml
+
+!Makefile
+
+!.vscode/settings.json

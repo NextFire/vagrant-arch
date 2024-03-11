@@ -4,7 +4,6 @@ all: up
 
 launchctl-load:
 	sudo launchctl load $(PLIST_PATH)
-	sleep 5
 
 launchctl-unload:
 	sudo launchctl unload $(PLIST_PATH)
